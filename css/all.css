@@ -1,0 +1,196 @@
+/* reset */
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+body {
+	line-height: 1;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+blockquote, q {
+	quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: inherit;
+	color: inherit;
+	padding: 0;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+:root {
+	--text-color-primary: #fff;
+	--text-color-accent: #000;
+	--font-size-primary: 28px;
+	--background-color-body: #222;
+	--background-color-primary: #aaa;
+	--background-color-display: #666;
+	--background-color-operator: #333;
+	--background-color-operator-hover: #555;
+}
+
+body {
+	background-color: var(--background-color-body);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.calculator {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	background-color: var(--background-color-primary);
+	margin: 60px;
+	border-radius: 20px;
+	color: var(--text-color-primary);
+	width: 372px;
+}
+
+.expression {
+	background-color: var(--background-color-display);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	padding: 16px 16px 8px;
+	border-radius: 20px 20px 0 0;
+}
+
+.expression .last, .expression .current {
+	width: 100%;
+	background-color: transparent;
+	text-align: right;
+	outline: none;
+	border: 0;
+}
+
+.expression .last {
+	color: var(--text-color-accent);
+	font-size: var(--font-size-primary);
+}
+
+.expression .current {
+	color: var(--text-color-primary);
+	font-size: 56px;
+}
+
+.middle {
+	display: flex;
+	font-size: var(--font-size-primary);
+	padding: 0 8px;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.middle .clear, .middle .backspace {
+	color: var(--text-color-accent);
+	width: 64px;
+	height: 64px;
+	margin: 8px 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 32px;
+}
+
+.middle .clear:hover:not(:active), .middle .backspace:hover:not(:active) {
+	background-color: rgba(255, 255, 255, 0.1);
+	color: var(--background-color-operator-hover);
+}
+
+.bottom {
+	display: flex;
+	font-size: var(--font-size-primary);
+	user-select: none;
+	width: 100%;
+	padding: 0 0 0 8px;
+}
+
+.bottom .characters {
+	display: flex;
+	flex-wrap: wrap;
+	width: 216px;
+}
+
+.bottom .characters .character {
+	border-radius: 32px;
+	width: 64px;
+	height: 64px;
+	margin: 0 8px 16px 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.bottom .characters .character:hover:not(:active) {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+.bottom .operators {
+	display: flex;
+	flex-wrap: wrap;
+	width: 144px;
+}
+
+.bottom .operators .operator {
+	background-color: var(--background-color-operator);
+	border-radius: 32px;
+	width: 64px;
+	height: 64px;
+	margin: 0 8px 16px 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.bottom .operators .operator:hover:not(:active) {
+	background-color: var(--background-color-operator-hover);
+}
+
+.bottom .operators .equal {
+	width: 64px;
+	height: 64px;
+	background-color: var(--background-color-operator);
+	border-radius: 32px;
+	padding: 0 0 0 72px;
+	box-sizing: content-box;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 16px;
+}
+
+.bottom .operators .equal:hover:not(:active) {
+	background-color: var(--background-color-operator-hover);
+}
