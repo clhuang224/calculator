@@ -14,6 +14,10 @@
         element.classList.add('character')
         element.innerText = char
         element.addEventListener('click', function () {
+            if (lastExpElement.value) {
+                lastExpElement.value = ''
+                currentExpElement.value = '0'
+            }
             currentExpElement.value = handleExp(currentExpElement.value, char)
             currentExpElement.scrollLeft = currentExpElement.scrollWidth
         })
@@ -25,6 +29,9 @@
         element.classList.add('operator')
         element.innerText = ope
         element.addEventListener('click', function () {
+            if (lastExpElement.value) {
+                lastExpElement.value = ''
+            }
             currentExpElement.value = handleExp(currentExpElement.value, ope)
             currentExpElement.scrollLeft = currentExpElement.scrollWidth
         })
@@ -38,6 +45,9 @@
     })
 
     backspaceElement.addEventListener('click', function (){
+        if (lastExpElement.value) {
+            lastExpElement.value = ''
+        }
         currentExpElement.value = backspace(currentExpElement.value)
     })
 
