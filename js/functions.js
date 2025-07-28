@@ -116,22 +116,23 @@ function infixToPostfix (infix) {
             case '×':
             case '+':
             case '-':
-                while (stack.length && getPriority(stack[0]) >= getPriority(current)) {
-                    result = [stack.pop(), ...result]
+                while (stack.length && getPriority(stack.at(-1)) >= getPriority(current)) {
+                    result.push(stack.pop())
                 }
                 stack.push(current)
                 break
             case ')':
-                while (stack.length && stack[0] !== '(') {
-                    result = [stack.pop(), ...result]
+                while (stack.length && stack.at(-1) !== '(') {
+                    result.push(stack.pop())
                 }
                 stack.pop()
                 break
             default:
-                result = result.concat(current)
+                result.push(current)
         }
         i += 1
     }
+    return result.concat(stack.slice().reverse())
 }
 
 /**
