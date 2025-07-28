@@ -55,7 +55,7 @@ function handleExp (exp, char) {
             if (operators.includes(exp[exp.length - 1])) return exp.concat('0').concat(char)
             return exp.concat(char)
         case '(':
-            if (exp === '0') return ope
+            if (exp === '0') return char
             if (!operatorsWithoutRightParen.some((el) => exp.endsWith(el))) return exp.concat('×(')
             return exp.concat(char)
         case ')':
