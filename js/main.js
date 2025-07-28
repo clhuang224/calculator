@@ -42,9 +42,8 @@
     })
 
     equalElement.addEventListener('click', function () {
-        let result = calculate(currentExpElement.value)
-        if (!result) return
-        lastExpElement.value = currentExpElement.value
-        currentExpElement.value = result
+        if (!canCalculate(currentExpElement.value)) return
+        lastExpElement.value = fillRightParens(currentExpElement.value)
+        currentExpElement.value = calculate(lastExpElement.value)
     })
 })()

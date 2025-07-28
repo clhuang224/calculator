@@ -87,13 +87,49 @@ function backspace(exp) {
     return exp.substring(0, exp.length - 1)
 }
 
+function fillRightParens(exp) {
+    let amount = getRightParenQuota(exp)
+    if (amount) return exp.concat(')'.repeat(amount))
+    return exp
+}
+
+function canCalculate (exp) {
+    if (operatorsWithoutRightParen.some((ope) => exp.endsWith(ope))) return false
+    let infixList = tokenize(fillRightParens(exp))
+    if (!infixList || infixList.length < 3) return false
+    return true
+}
+
+/**
+ * @param {string} exp '-6×8-4+9÷2.5'
+ * @returns {string[]} ['-6', '×', '8', '-', '4', '+', '9', '÷', '2.5']
+ */
+function tokenize(exp) {
+    const rawTokens = exp.match(/\d+(?:\.\d+)?|[+\-×÷()]/g) ?? []
+    const tokens = []
+    let i = 0
+    while (i < rawTokens.length) {
+        const token = rawTokens[i]
+        const prev = tokens.at(-1)
+        const next = rawTokens[i + 1]
+        if (token === '-' && (i === 0 || ['+', '-', '×', '÷', '('].includes(prev)) && /^\d+(\.\d+)?$/.test(next)) {
+            tokens.push('-' + next)
+            i += 2
+            continue
+        }
+        tokens.push(token)
+        i += 1
+    }
+    return tokens
+}
+
 /**
  * 
- * @param {string} char 
- * @returns {1 | 0 | -1 | -2} numbers -> () -> ÷× -> -+
+ * @param {'÷' | '×' | '-' | '+'} char 
+ * @returns {-1 | -2} ÷× -> -+
  */
 function getPriority(char) {
-    return -operatorPairs.findIndex((pair) => pair.includes(char))
+    return 0 - operatorPairs.findIndex((pair) => pair.includes(char))
 }
 
 /**
@@ -102,23 +138,13 @@ function getPriority(char) {
  */
 function infixToPostfix (infix) {
     let i = 0
-    let stack = []
+    let stack = ['(']
     let result = []
-    while (i <= infix.length) {
-        let current = infix?.[i] ?? null
+    infix = [...infix, ')']
+    while (i < infix.length) {
+        let current = infix[i]
         switch (current) {
-            case null:
-                return result.concat(stack.slice().reverse())
             case '(':
-                stack.push(current)
-                break
-            case '÷':
-            case '×':
-            case '+':
-            case '-':
-                while (stack.length && getPriority(stack.at(-1)) >= getPriority(current)) {
-                    result.push(stack.pop())
-                }
                 stack.push(current)
                 break
             case ')':
@@ -127,12 +153,21 @@ function infixToPostfix (infix) {
                 }
                 stack.pop()
                 break
+            case '÷':
+            case '×':
+            case '+':
+            case '-':
+                while (stack.length && stack.at(-1) !== '(' && (getPriority(stack.at(-1)) >= getPriority(current))) {
+                    result.push(stack.pop())
+                }
+                stack.push(current)
+                break
             default:
                 result.push(current)
         }
         i += 1
     }
-    return result.concat(stack.slice().reverse())
+    return result
 }
 
 /**
@@ -140,27 +175,32 @@ function infixToPostfix (infix) {
  * @returns {string | null} new result
  */
 function calculate (exp) {
-    if (operatorsWithoutRightParen.some((ope) => exp.endsWith(ope))) return null
-    let infixList = (exp.concat(')'.repeat(getRightParenQuota(exp)))).match(/-?\d+(\.\d+)?|[+\-×÷]/g)
-    if (infixList.length === 1) return null
+    let infixList = tokenize(exp)
     let postfixList = infixToPostfix(infixList)
-    let result = new Big(postfixList.shift())
-    while (postfixList.length) {
-        let current = new Big(postfixList.shift())
-        switch (postfixList.shift()) {
-            case '+':
-                result = result.plus(current)
-                break
-            case '-':
-                result = result.minus(current)
+    let stack = []
+    for (const token of postfixList) {
+        if (!operators.includes(token)) {
+            stack.push(new Big(token))
+            continue
+        }
+        let b = stack.pop(), a = stack.pop(), result
+        switch (token) {
+            case '÷':
+                result = a.div(b)
                 break
             case '×':
-                result = result.times(current)
+                result = a.times(b)
                 break
-            case '÷':
-                result = result.div(current)
+            case '+':
+                result = a.plus(b)
                 break
+            case '-':
+                result = a.minus(b)
+                break
+            default:
+                console.error(token)
         }
+        stack.push(result)
     }
-    return result.toString()
+    return stack[0].toString()
 }
