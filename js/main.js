@@ -26,7 +26,7 @@
         element.innerText = ope
         element.addEventListener('click', function () {
             currentExpElement.value = handleExp(currentExpElement.value, ope)
-            currentExpElement.scrollTo({ left: Number.MAX_SAFE_INTEGER })
+            currentExpElement.scrollLeft = currentExpElement.scrollWidth
         })
         operatorsElement.appendChild(element)
     })
