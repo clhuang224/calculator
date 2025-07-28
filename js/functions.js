@@ -3,30 +3,6 @@ function getLastNumber (exp) {
 }
 
 /**
- * @param {'7' | '8' | '9' | '4' | '5' | '6' | '1' | '2' | '3' | '0' | '00' | '.'} char 
- * @param {string} exp
- * @returns new expression
- */
-function appendCharacter (char, exp) {
-    if (['0', '00'].includes(char)) {
-        if (exp === '0') return '0'
-        if (operators.map((ope) => ope.concat('0')).some((el) => exp.endsWith(el))) return exp
-        if (exp.endsWith(')')) return exp.concat('0')
-        return '0'
-    }
-    if (char === '.') {
-        if (exp.endsWith(')')) return exp.concat('×0.')
-        if (exp.endsWith('(')) return exp.concat('0.')
-        if (exp.endsWith('.') || getLastNumber(exp).includes('.')) return exp
-        if (operators.includes(exp[exp.length - 1])) return exp.concat('0').concat(char)
-        return exp.concat(char)
-    }
-    if (exp.endsWith(')')) return exp.concat('×').concat(char)
-    if (exp === '0') return char
-    return exp.concat(char)
-}
-
-/**
  * 
  * @param {string} exp 
  * @returns {number}
@@ -47,40 +23,59 @@ function getRightParenQuota (exp) {
 }
 
 /**
- * @param {'(' | ')' | '÷' | '×' | '+' | '-'} ope 
+ * 
  * @param {string} exp
- * @returns new expression
+ * @param {'(' | ')' | '÷' | '×' | '+' | '-' | '7' | '8' | '9' | '4' | '5' | '6' | '1' | '2' | '3' | '00' | '0' | '.'} char 
+ * @returns 
  */
-function appendOperator (ope, exp) {
-    if (exp === '0') {
-        if (['-', '('].includes(ope)) return ope
-        if (ope === ')') return exp
-        return exp.concat(ope)
-    }
-    let lastChar = exp[exp.length - 1]
-    switch (ope) {
-        case ')':
-            if (!getRightParenQuota(exp)) return exp
-            if (operatorsWithoutRightParen.includes(lastChar)) return exp
-            break
+function handleExp (exp, char) {
+    switch (char) {
+        case '00':
+        case '0':
+            if (exp === '0') return '0'
+            if (operators.map((ope) => ope.concat('0')).some((el) => exp.endsWith(el))) return exp
+            if (exp.endsWith(')')) return exp.concat('×0')
+            return exp.concat(char)
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            if (exp === '0') return char
+            if (exp.endsWith(')')) return exp.concat('×').concat(char)
+            return exp.concat(char)
+        case '.':
+            if (exp.endsWith(')')) return exp.concat('×0.')
+            if (exp.endsWith('(')) return exp.concat('0.')
+            if (exp.endsWith('.') || getLastNumber(exp).includes('.')) return exp
+            if (operators.includes(exp[exp.length - 1])) return exp.concat('0').concat(char)
+            return exp.concat(char)
         case '(':
-            if (!operators.includes(lastChar) || lastChar === ')') return exp.concat('×(')
-            break
-        case '+':
-        case '×':
+            if (exp === '0') return ope
+            if (!operatorsWithoutRightParen.some((el) => exp.endsWith(el))) return exp.concat('×(')
+            return exp.concat(char)
+        case ')':
+            if (exp === '0') return exp
+            if (!getRightParenQuota(exp)) return exp
+            if (operatorsWithoutRightParen.some((el) => exp.endsWith(el))) return exp
+            return exp.concat(char)
         case '÷':
-            if (operatorsWithoutRightParen.includes(lastChar)) {
-                return exp.substring(0, exp.length - 1).concat(ope)
-            }
-            if (lastChar === '(') return exp
-            break
+        case '×':
+        case '+':
+            if (['÷-', '×-', '+-', '(', '-'].some((el) => exp.endsWith(el))) return exp
+            return exp.concat(char)
         case '-':
-            if (operatorsWithoutRightParen.includes(lastChar)) {
-                return exp.substring(0, exp.length - 1).concat(ope)
-            }
-            if (lastChar === '-') return exp.substring(0, exp.length - 1).concat(ope)
+            if (exp === '0') return char
+            if (exp.endsWith('+')) return exp.substring(0, exp.length - 1).concat(char)
+            if (exp.endsWith('-')) return exp
+            return exp.concat(char)
+        default:
+            console.error('Something wrong', exp, char)
     }
-    return exp.concat(ope)
 }
 
 /**
@@ -92,8 +87,13 @@ function backspace(exp) {
     return exp.substring(0, exp.length - 1)
 }
 
-function getPriority(str) {
-    return priority?.[str] ?? 0
+/**
+ * 
+ * @param {string} char 
+ * @returns {1 | 0 | -1 | -2} numbers -> () -> ÷× -> -+
+ */
+function getPriority(char) {
+    return -operatorPairs.findIndex((pair) => pair.includes(char))
 }
 
 /**

@@ -14,7 +14,7 @@
         element.classList.add('character')
         element.innerText = char
         element.addEventListener('click', function () {
-            currentExpElement.value = appendCharacter(char, currentExpElement.value)
+            currentExpElement.value = handleExp(currentExpElement.value, char)
             currentExpElement.scrollTo({ left: Number.MAX_SAFE_INTEGER })
         })
         charactersElement.appendChild(element)
@@ -25,7 +25,7 @@
         element.classList.add('operator')
         element.innerText = ope
         element.addEventListener('click', function () {
-            currentExpElement.value = appendOperator(ope, currentExpElement.value)
+            currentExpElement.value = handleExp(currentExpElement.value, ope)
             currentExpElement.scrollTo({ left: Number.MAX_SAFE_INTEGER })
         })
         operatorsElement.appendChild(element)
