@@ -66,7 +66,8 @@ function handleExp (exp, char) {
         case '÷':
         case '×':
         case '+':
-            if (['÷-', '×-', '+-', '(', '-'].some((el) => exp.endsWith(el))) return exp
+            if (['÷-', '×-', '+-', '('].some((el) => exp.endsWith(el))) return exp
+            if (['÷', '×', '+', '-'].some((el) => exp.endsWith(el))) return exp.substring(0, exp.length - 1).concat(char)
             return exp.concat(char)
         case '-':
             if (exp === '0') return char
@@ -101,8 +102,8 @@ function canCalculate (exp) {
 }
 
 /**
- * @param {string} exp '-6×8-4+9÷2.5'
- * @returns {string[]} ['-6', '×', '8', '-', '4', '+', '9', '÷', '2.5']
+ * @param {string} exp '-6×8-4+9÷-2.5'
+ * @returns {string[]} ['-6', '×', '8', '-', '4', '+', '9', '÷', '-2.5']
  */
 function tokenize(exp) {
     const rawTokens = exp.match(/\d+(?:\.\d+)?|[+\-×÷()]/g) ?? []
@@ -112,7 +113,7 @@ function tokenize(exp) {
         const token = rawTokens[i]
         const prev = tokens.at(-1)
         const next = rawTokens[i + 1]
-        if (token === '-' && (i === 0 || ['+', '-', '×', '÷', '('].includes(prev)) && /^\d+(\.\d+)?$/.test(next)) {
+        if (token === '-' && (i === 0 || operatorsWithoutRightParen.includes(prev)) && /^\d+(\.\d+)?$/.test(next)) {
             tokens.push('-' + next)
             i += 2
             continue
