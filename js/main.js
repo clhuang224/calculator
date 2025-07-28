@@ -15,7 +15,7 @@
         element.innerText = char
         element.addEventListener('click', function () {
             currentExpElement.value = handleExp(currentExpElement.value, char)
-            currentExpElement.scrollTo({ left: Number.MAX_SAFE_INTEGER })
+            currentExpElement.scrollLeft = currentExpElement.scrollWidth
         })
         charactersElement.appendChild(element)
     })
