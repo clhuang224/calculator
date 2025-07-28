@@ -7,7 +7,7 @@ function getLastNumber (exp) {
  * @param {string} exp 
  * @returns {number}
  */
-function getRightParenQuota (exp) {
+function countUnclosedParens (exp) {
     let result = 0
     exp.split('').forEach((char) => {
         switch (char) {
@@ -60,7 +60,7 @@ function handleExp (exp, char) {
             return exp.concat(char)
         case ')':
             if (exp === '0') return exp
-            if (!getRightParenQuota(exp)) return exp
+            if (!countUnclosedParens(exp)) return exp
             if (operatorsWithoutRightParen.some((el) => exp.endsWith(el))) return exp
             return exp.concat(char)
         case '÷':
@@ -88,7 +88,7 @@ function backspace(exp) {
 }
 
 function fillRightParens(exp) {
-    let amount = getRightParenQuota(exp)
+    let amount = countUnclosedParens(exp)
     if (amount) return exp.concat(')'.repeat(amount))
     return exp
 }
